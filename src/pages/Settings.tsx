@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
 import { Card } from '../components/Card';
 import { DashboardLayout } from '../layouts/DashboardLayout';
 import { useStacks } from '../components/StacksProvider';
 import { CONTRACT_NAME, FIXED_CONTRACT_ADDRESS } from '../consts';
 
 export const Settings = () => {
-    const { isMainnet, setNetwork, network } = useStacks();
+    const { isMainnet, setNetwork } = useStacks();
 
     return (
         <DashboardLayout>

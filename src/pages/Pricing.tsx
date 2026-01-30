@@ -1,4 +1,3 @@
-import React from 'react';
 import { MagneticButton } from '../components/MagneticButton';
 import { Icons } from '../components/Icons';
 import { Card } from '../components/Card';

@@ -1,5 +1,3 @@
-import React from 'react';
-
 // --- ICONS (Inline SVGs to avoid dependencies) ---
 interface IconProps {
   className?: string;

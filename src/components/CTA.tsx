@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import { useRef } from 'react';
 import { MagneticButton } from './MagneticButton';
 
 export const CTA = () => {

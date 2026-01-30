@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Card } from '../components/Card';
 import { Icons } from '../components/Icons';
 import { MagneticButton } from '../components/MagneticButton';
@@ -10,7 +10,11 @@ export const Employees = () => {
 
   return (
     <DashboardLayout>
-       <AddEmployeeModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+       <AddEmployeeModal 
+          isOpen={isModalOpen} 
+          onClose={() => setIsModalOpen(false)} 
+          companyId="general-view" 
+       />
        
        <header className="flex justify-between items-center mb-12">
            <div>

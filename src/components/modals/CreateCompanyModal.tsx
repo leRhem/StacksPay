@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Modal } from './Modal';
 import { MagneticButton } from '../MagneticButton';
 import { useStacksConnect } from '../../hook/useStacksConnect';
