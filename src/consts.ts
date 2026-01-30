@@ -1,0 +1,3 @@
+export const CONTRACT_NAME = import.meta.env.VITE_CONTRACT_NAME || "stackspay";
+export const FIXED_CONTRACT_ADDRESS = import.meta.env.VITE_CONTRACT_ADDRESS || "ST1M9HB8FHTGZ0TA84TNW6MP9H8P39AYK13H3C9J1";
+
