@@ -21,23 +21,30 @@ export const AddEmployeeModal = ({ isOpen, onClose, companyId }: AddEmployeeModa
     const handleSubmit = async () => {
         if (!address || !name || !salary) return;
         
-        await openContractCall({
-            network,
-            contractAddress: FIXED_CONTRACT_ADDRESS || 'ST1M9HB8FHTGZ0TA84TNW6MP9H8P39AYK13H3C9J1',
-            contractName: CONTRACT_NAME,   
-            functionName: 'add-employee',
-            functionArgs: [
-                stringUtf8CV(companyId),
-                standardPrincipalCV(address),
-                stringUtf8CV(name),
-                uintCV(Number(salary))
-            ],
-            postConditionMode: PostConditionMode.Allow,
-            onFinish: (data) => {
-                console.log('Transaction:', data);
-                onClose();
-            },
-        });
+        try {
+            await openContractCall({
+                network,
+                contractAddress: FIXED_CONTRACT_ADDRESS || 'ST1M9HB8FHTGZ0TA84TNW6MP9H8P39AYK13H3C9J1',
+                contractName: CONTRACT_NAME,   
+                functionName: 'add-employee',
+                functionArgs: [
+                    stringUtf8CV(companyId),
+                    standardPrincipalCV(address),
+                    stringUtf8CV(name),
+                    uintCV(Number(salary))
+                ],
+                postConditionMode: PostConditionMode.Allow,
+                onFinish: (data) => {
+                    console.log('Transaction:', data);
+                    onClose();
+                },
+                onCancel: () => {
+                    console.log('User cancelled employee registration');
+                }
+            });
+        } catch (error) {
+            console.error('Add employee initiation failed:', error);
+        }
     };
 
     return (

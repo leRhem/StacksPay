@@ -54,7 +54,11 @@ export function useStacksConnect() {
     checkConnection();
   }, []);
 
+  const [isConnecting, setIsConnecting] = useState(false);
+
   const connectWallet = async () => {
+    if (isConnecting) return;
+    setIsConnecting(true);
     try {
       const res = await connect();
       
@@ -75,8 +79,14 @@ export function useStacksConnect() {
         stxAddress: stxAddress
       });
       setIsConnected(true);
-    } catch (error) {
-      console.error('Wallet connection failed', error);
+    } catch (error: any) {
+      if (error?.message?.includes('User rejected') || error?.code === 4001) {
+        console.log('User cancelled wallet connection');
+      } else {
+        console.error('Wallet connection failed', error);
+      }
+    } finally {
+      setIsConnecting(false);
     }
   };
 

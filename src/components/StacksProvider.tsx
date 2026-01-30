@@ -24,9 +24,13 @@ export const StacksProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     if (userSession.isSignInPending()) {
-      userSession.handlePendingSignIn().then((userData) => {
-        setUserData(userData);
-      });
+      userSession.handlePendingSignIn()
+        .then((userData) => {
+          setUserData(userData);
+        })
+        .catch((err) => {
+          console.error('Failed to handle pending sign-in:', err);
+        });
     } else if (userSession.isUserSignedIn()) {
       setUserData(userSession.loadUserData());
     }

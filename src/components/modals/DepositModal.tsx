@@ -19,21 +19,28 @@ export const DepositModal = ({ isOpen, onClose, companyId }: DepositModalProps) 
     const handleSubmit = async () => {
         if (!amount || !companyId) return;
 
-        await openContractCall({
-            network,
-            contractAddress: FIXED_CONTRACT_ADDRESS || 'ST1M9HB8FHTGZ0TA84TNW6MP9H8P39AYK13H3C9J1',
-            contractName: CONTRACT_NAME,
-            functionName: 'fund-payroll',
-            functionArgs: [
-                stringUtf8CV(companyId),
-                uintCV(Number(amount) * 1000000) // Convert to uSTX (assuming 6 decimals)
-            ],
-            postConditionMode: PostConditionMode.Allow,
-            onFinish: (data) => {
-                console.log('Transaction:', data);
-                onClose();
-            },
-        });
+        try {
+            await openContractCall({
+                network,
+                contractAddress: FIXED_CONTRACT_ADDRESS || 'ST1M9HB8FHTGZ0TA84TNW6MP9H8P39AYK13H3C9J1',
+                contractName: CONTRACT_NAME,
+                functionName: 'fund-payroll',
+                functionArgs: [
+                    stringUtf8CV(companyId),
+                    uintCV(Number(amount) * 1000000) // Convert to uSTX (assuming 6 decimals)
+                ],
+                postConditionMode: PostConditionMode.Allow,
+                onFinish: (data) => {
+                    console.log('Transaction:', data);
+                    onClose();
+                },
+                onCancel: () => {
+                    console.log('User cancelled deposit');
+                }
+            });
+        } catch (error) {
+            console.error('Deposit initiation failed:', error);
+        }
     };
 
     return (

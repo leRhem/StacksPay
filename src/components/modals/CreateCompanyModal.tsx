@@ -21,35 +21,39 @@ export const CreateCompanyModal = ({ isOpen, onClose }: CreateCompanyModalProps)
     const handleSubmit = async () => {
         if (!name || !companyId) return;
 
-        await openContractCall({
-            network,
-            contractAddress: FIXED_CONTRACT_ADDRESS || 'ST1M9HB8FHTGZ0TA84TNW6MP9H8P39AYK13H3C9J1',
-            contractName: CONTRACT_NAME,
-            functionName: 'create-company',
-            functionArgs: [
-                stringUtf8CV(companyId),
-                stringUtf8CV(name),
-                noneCV(), // Description (optional)
-                uintCV(Number(frequency)),
-                uintCV(Number(payDay))
-            ],
-            postConditionMode: PostConditionMode.Allow,
-            onFinish: (data) => {
-                console.log('Transaction:', data);
-                
-                // Persist to local storage for "My Companies" list
-                const saved = localStorage.getItem('stackspay_companies');
-                const companies = saved ? JSON.parse(saved) : [];
-                companies.push({ id: companyId, name: name });
-                localStorage.setItem('stackspay_companies', JSON.stringify(companies));
+        try {
+            await openContractCall({
+                network,
+                contractAddress: FIXED_CONTRACT_ADDRESS || 'ST1M9HB8FHTGZ0TA84TNW6MP9H8P39AYK13H3C9J1',
+                contractName: CONTRACT_NAME,
+                functionName: 'create-company',
+                functionArgs: [
+                    stringUtf8CV(companyId),
+                    stringUtf8CV(name),
+                    noneCV(), // Description (optional)
+                    uintCV(Number(frequency)),
+                    uintCV(Number(payDay))
+                ],
+                postConditionMode: PostConditionMode.Allow,
+                onFinish: (data) => {
+                    console.log('Transaction:', data);
+                    
+                    // Persist to local storage for "My Companies" list
+                    const saved = localStorage.getItem('stackspay_companies');
+                    const companies = saved ? JSON.parse(saved) : [];
+                    companies.push({ id: companyId, name: name });
+                    localStorage.setItem('stackspay_companies', JSON.stringify(companies));
 
-                onClose();
-                // We'll let the user see the success or redirect. 
-                // For better UX, let's refresh or navigation happens in parent? 
-                // Actually, just closing and letting them see it in the list (or auto navigating) is good.
-                window.location.href = `/companies/${companyId}`;
-            },
-        });
+                    onClose();
+                    window.location.href = `/companies/${companyId}`;
+                },
+                onCancel: () => {
+                    console.log('User cancelled company registration');
+                }
+            });
+        } catch (error) {
+            console.error('Contract call initiation failed:', error);
+        }
     };
 
     return (
