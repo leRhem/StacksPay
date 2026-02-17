@@ -40,7 +40,7 @@ export const Features = () => {
     ];
 
     return (
-        <section id="developers" className="py-32 bg-black relative">
+        <section id="features" className="py-32 bg-black relative">
             <div className="container mx-auto px-6">
                 <h2 className="text-5xl md:text-7xl font-display font-bold mb-20 text-center">Built for <span className="kinetic-text">Crypto Natives</span></h2>
                 <div ref={gridRef} className="grid md:grid-cols-3 gap-6">

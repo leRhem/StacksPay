@@ -1,11 +1,13 @@
 import { useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { MagneticButton } from './MagneticButton';
 
 export const CTA = () => {
     const containerRef = useRef(null);
+    const navigate = useNavigate();
 
     return (
-        <section id="pricing" ref={containerRef} className="min-h-screen bg-kinetic-purple flex items-center justify-center text-center relative overflow-hidden">
+        <section id="cta" ref={containerRef} className="min-h-screen bg-kinetic-purple flex items-center justify-center text-center relative overflow-hidden">
             <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 contrast-150 mix-blend-overlay"></div>
             
             <div className="relative z-10 px-6">
@@ -16,9 +18,12 @@ export const CTA = () => {
                     Stop living in the banking stone age. Upgrade your organization.
                 </p>
                 <div className="flex justify-center scale-125">
-                     <MagneticButton className="px-12 py-6 bg-black text-white rounded-full font-bold text-xl hover:shadow-[0_0_50px_rgba(0,0,0,0.5)] transition-shadow duration-500">
+                    <MagneticButton 
+                        onClick={() => navigate('/dashboard')}
+                        className="px-12 py-6 bg-black text-white rounded-full font-bold text-xl hover:shadow-[0_0_50px_rgba(0,0,0,0.5)] transition-shadow duration-500"
+                    >
                         Launch Dashboard
-                     </MagneticButton>
+                    </MagneticButton>
                 </div>
             </div>
         </section>

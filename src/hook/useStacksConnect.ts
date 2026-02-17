@@ -1,49 +1,53 @@
 import { useState, useEffect } from 'react';
-import { 
-  connect, 
-  disconnect as stacksDisconnect, 
-  isConnected as stacksIsConnected, 
+import {
+  connect,
+  disconnect as stacksDisconnect,
+  isConnected as stacksIsConnected,
   getLocalStorage,
-  AppConfig,
-  UserSession
 } from '@stacks/connect';
-
-const appConfig = new AppConfig(['store_write', 'publish_data']);
-const userSession = new UserSession({ appConfig });
-
-// Get network from environment variable, default to testnet
-const NETWORK_ENV = import.meta.env.VITE_STX_NETWORK || 'testnet';
-import { STACKS_MAINNET, STACKS_TESTNET } from '@stacks/network';
-
-const network = NETWORK_ENV === 'mainnet' ? STACKS_MAINNET : STACKS_TESTNET;
+import { useStacks } from '../components/StacksProvider';
 
 export function useStacksConnect() {
+  // ── Network from the shared StacksProvider context ───────────────
+  const {
+    network,
+    networkType,
+    isMainnet,
+    setNetwork,
+    userSession,
+  } = useStacks();
+
   const [isConnected, setIsConnected] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [userAddress, setUserAddress] = useState<string>('');
   const [userData, setUserData] = useState<any>(null);
 
+  // Re-check connection whenever the network type changes
   useEffect(() => {
     const checkConnection = async () => {
       try {
         const isOk = stacksIsConnected() || userSession.isUserSignedIn();
         setIsConnected(isOk);
-        
+
         if (isOk) {
           if (userSession.isUserSignedIn()) {
             const data = userSession.loadUserData();
-            // Use network from env var to select address
-            const address = NETWORK_ENV === 'mainnet' 
-              ? data.profile.stxAddress.mainnet 
-              : data.profile.stxAddress.testnet;
+            // Use the reactive networkType to select the right address
+            const address = networkType === 'mainnet'
+              ? data?.profile?.stxAddress?.mainnet
+              : data?.profile?.stxAddress?.testnet;
             setUserAddress(address ?? '');
-            setUserData(data);
+            setUserData(data ?? null);
           } else {
             const storage = getLocalStorage();
             if (storage?.addresses?.stx?.[0]) {
               setUserAddress(storage.addresses.stx[0].address ?? '');
             }
           }
+        } else {
+          // Not connected — clear stale state
+          setUserAddress('');
+          setUserData(null);
         }
       } catch (error) {
         console.error('Error during connection check:', error);
@@ -52,7 +56,7 @@ export function useStacksConnect() {
       }
     };
     checkConnection();
-  }, []);
+  }, [networkType, userSession]);
 
   const [isConnecting, setIsConnecting] = useState(false);
 
@@ -61,22 +65,37 @@ export function useStacksConnect() {
     setIsConnecting(true);
     try {
       const res = await connect();
-      
+
       // Guard against null/undefined result
       if (!res || !res.addresses || !Array.isArray(res.addresses)) {
         console.error('Invalid response from connect():', res);
         return;
       }
-      
+
       // Safely find STX address
       const stxAddressObj = res.addresses.find(a => a.symbol === 'STX');
       const stxAddress = stxAddressObj?.address ?? res.addresses[0]?.address ?? '';
-      
-      // Update both states consistently
-      setUserAddress(stxAddress);
+
+      // Look up network-specific STX addresses; fall back to the generic stxAddressObj
+      const mainnetAddr = res.addresses.find(a => a.symbol === 'STX' && (a as any).network === 'mainnet')?.address
+        ?? stxAddressObj?.address ?? stxAddress;
+      const testnetAddr = res.addresses.find(a => a.symbol === 'STX' && (a as any).network === 'testnet')?.address
+        ?? stxAddressObj?.address ?? stxAddress;
+
+      // Pick the address matching the current reactive network
+      const activeAddr = networkType === 'mainnet' ? mainnetAddr : testnetAddr;
+      setUserAddress(activeAddr);
+
+      // Normalize userData shape to be consistent with userSession.loadUserData()
       setUserData({
+        profile: {
+          stxAddress: {
+            mainnet: mainnetAddr,
+            testnet: testnetAddr,
+          },
+        },
         addresses: res.addresses,
-        stxAddress: stxAddress
+        stxAddress: activeAddr,
       });
       setIsConnected(true);
     } catch (error: any) {
@@ -100,5 +119,17 @@ export function useStacksConnect() {
     window.location.href = '/';
   };
 
-  return { isConnected, isLoading, userAddress, userData, connectWallet, disconnect, userSession, network, networkType: NETWORK_ENV };
+  return {
+    isConnected,
+    isLoading,
+    userAddress,
+    userData,
+    connectWallet,
+    disconnect,
+    userSession,
+    network,
+    networkType,
+    isMainnet,
+    setNetwork,
+  };
 }

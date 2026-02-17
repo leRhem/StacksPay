@@ -18,7 +18,7 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
   const navItems = [
     { name: 'Overview', icon: <Icons.Layers />, path: '/dashboard' },
-    { name: 'Companies', icon: <Icons.Layers />, path: '/companies' },
+    { name: 'Companies', icon: <Icons.Building />, path: '/companies' },
     { name: 'Settings', icon: <Icons.Shield />, path: '/settings' },
   ];
 

@@ -47,7 +47,7 @@ export const Stats = () => {
     ];
 
     return (
-        <section id="company" ref={containerRef} className="py-20 bg-[#0a0a0f] text-white border-t border-white/10 overflow-hidden">
+        <section id="testimonials" ref={containerRef} className="py-20 bg-[#0a0a0f] text-white border-t border-white/10 overflow-hidden">
             <div className="container mx-auto px-6 mb-20 text-center">
                 <h2 className="text-4xl md:text-6xl font-display font-bold mb-16">Trusted by <span className="text-kinetic-orange">Crypto Giants</span></h2>
                 <div className="grid md:grid-cols-3 gap-12">

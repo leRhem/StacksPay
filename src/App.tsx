@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { Home } from './pages/Home';
 import { Companies } from './pages/Companies';
 import { CompanyDetails } from './pages/Dashboard';
+import { EmployeeDashboard } from './pages/EmployeeDashboard';
 import { Settings } from './pages/Settings';
 import { StacksProvider } from './components/StacksProvider';
 import { NavBar } from './components/NavBar';
@@ -20,6 +21,7 @@ function App() {
           <Route path="/dashboard" element={<Overview />} />
           <Route path="/companies" element={<Companies />} />
           <Route path="/companies/:companyId" element={<CompanyDetails />} />
+          <Route path="/claim/:companyId" element={<EmployeeDashboard />} />
           
           <Route path="/settings" element={<Settings />} />
           

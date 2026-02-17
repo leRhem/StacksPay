@@ -8,4 +8,21 @@ export default defineConfig({
     react(),
     tailwindcss()
   ],
+  server: {
+    proxy: {
+      // Proxy Stacks testnet API calls through the dev server to bypass CORS
+      '/api/stacks-testnet': {
+        target: 'https://api.testnet.hiro.so',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/stacks-testnet/, ''),
+        secure: true,
+      },
+      '/api/stacks-mainnet': {
+        target: 'https://api.hiro.so',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/stacks-mainnet/, ''),
+        secure: true,
+      },
+    },
+  },
 })
